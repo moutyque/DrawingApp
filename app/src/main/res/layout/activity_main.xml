@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/vertical_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="image"
+            android:scaleType="centerCrop" />
+
+        <small.app.drawingapp.DrawingView
+            android:id="@+id/drawingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80FFFFFF" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/vertical_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frame">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/beigeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/beige" />
+
+            <ImageButton
+                android:id="@+id/blackBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/black" />
+
+            <ImageButton
+                android:id="@+id/redBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/red" />
+
+            <ImageButton
+                android:id="@+id/greenBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/green" />
+
+            <ImageButton
+                android:id="@+id/blueBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/blue" />
+
+            <ImageButton
+                android:id="@+id/yellowBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/yellow" />
+
+            <ImageButton
+                android:id="@+id/lBlueBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/light_blue" />
+
+            <ImageButton
+                android:id="@+id/dPinkBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="setBrushColor"
+                app:srcCompat="@drawable/dark_pink" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnChangeSize"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="showBrushSizeChooserDialog"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_brush" />
+
+            <ImageButton
+                android:id="@+id/btnChangeBackground"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="onSelectBackgroundPicture"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_gallery" />
+
+            <ImageButton
+                android:id="@+id/btnUndo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="onUndo"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_undo" />
+
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:onClick="onSave"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_save" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
