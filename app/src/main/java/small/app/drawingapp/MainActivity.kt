@@ -11,7 +11,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaScannerConnection
-import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -21,6 +20,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import small.app.drawingapp.databinding.ActivityMainBinding
 import small.app.drawingapp.databinding.DialogBrushSizeBinding
 import java.io.ByteArrayOutputStream
@@ -202,64 +205,61 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onSave(view: View) {
-        if (isWriteStorageAllowed())
-            BitmapAsyncTask(getBitmapFromView(binding.frame)).execute()
-        else
+        if (isWriteStorageAllowed()) {
+            val uiScope = CoroutineScope(Dispatchers.Main)
+            uiScope.launch {
+                displayLoadingDialog()
+                saveFile(getBitmapFromView(binding.frame))
+            }
+        } else
             requestStoragePermission()
     }
 
-    //TODO : replace with coroutine
-    private inner class BitmapAsyncTask(val mBitmap: Bitmap) :
-        AsyncTask<Any, Void, String>() {
-        lateinit var mProgressDialog: Dialog
+    lateinit var mProgressDialog: Dialog
+    private fun displayLoadingDialog() {
+        mProgressDialog = Dialog(this)
+        mProgressDialog.setContentView(R.layout.dialog_custom_progress)
+        mProgressDialog.show()
+    }
 
-        override fun onPreExecute() {
-            super.onPreExecute()
-            mProgressDialog = Dialog(this@MainActivity)
-            mProgressDialog.setContentView(R.layout.dialog_custom_progress)
-            mProgressDialog.show()
-        }
 
-        override fun doInBackground(vararg p0: Any?): String {
-            var result = ""
+    private suspend fun saveFile(mBitmap: Bitmap) {
+
+        withContext(Dispatchers.IO) {
+            val f =
+                File(externalCacheDir!!.absoluteFile.toString() + File.separator + "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".png")
 
             try {
                 val bytes = ByteArrayOutputStream()
                 mBitmap.compress(
                     Bitmap.CompressFormat.PNG, 90, bytes
                 )
-                val f =
-                    File(externalCacheDir!!.absoluteFile.toString() + File.separator + "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".png")
+
                 val fos = FileOutputStream(f)
                 fos.write(bytes.toByteArray())
                 fos.close()
             } catch (e: java.lang.Exception) {
                 Log.e("SaveProcess", e.stackTraceToString())
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "File saved failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
 
-            return result
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-
-            if (result != null) {
+            withContext(Dispatchers.Main) {
                 Toast.makeText(
                     this@MainActivity,
-                    "File saved successfully : $result",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-            } else {
-                Toast.makeText(
-                    this@MainActivity,
-                    "File saved failed : $result",
+                    "File saved successfully",
                     Toast.LENGTH_SHORT
                 ).show()
             }
+
             mProgressDialog.dismiss()
             MediaScannerConnection.scanFile(
-                this@MainActivity, arrayOf(result), null
+                this@MainActivity, arrayOf(f.toString()), null
             ) { path, uri ->
                 val shareIntent = Intent()
                 shareIntent.action = Intent.ACTION_SEND
@@ -267,9 +267,7 @@ class MainActivity : AppCompatActivity() {
                 shareIntent.type = "image/png"
                 startActivity(Intent.createChooser(shareIntent, "Share"))
             }
-
         }
-
     }
 
     companion object {
